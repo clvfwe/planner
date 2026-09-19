@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planner</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app">
+  <nav class="nav" id="nav"><div class="in">
+    <button class="sfield" id="srchbtn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>검색</span></button>
+    <button class="mi on" id="nav-cal">일정</button>
+    <button class="mi" id="nav-plan">계획</button>
+    <button class="mi" id="nav-todo">할 일<i class="cnt" id="todo-cnt"></i></button>
+    <div class="h" id="h-cat">카테고리<button class="add" id="addcat" title="카테고리 추가">+</button></div>
+    <div class="sec" id="catlist"></div>
+    <div class="h" id="h-sub">구독<button class="add hide" id="addsub" title="구독 추가">+</button></div>
+    <div class="sec" id="sublist">
+      <div class="cat" id="holrow"><div class="cb"></div><div class="nm">대한민국 공휴일</div><span class="ed" title="편집">⋯</span></div>
+      <div class="cat" id="lunrow"><div class="cb"></div><div class="nm">음력</div><span class="ed" title="편집">⋯</span></div>
+      <div class="cat" id="trmrow"><div class="cb"></div><div class="nm">24절기</div><span class="ed" title="편집">⋯</span></div>
+    </div>
+    <div class="ndiv"></div>
+    <div class="foot"><button class="mi icon" id="navset" title="설정"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 14a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V20a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 18.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></button></div>
+  </div></nav>
+
+  <div class="page on" id="p-cal">
+    <div class="top">
+      <button class="ib" id="tog" title="사이드바"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <div class="title" id="title"></div>
+      <div class="nav-grp"><button class="ib" id="prev">‹</button><button class="ib today" id="today">오늘</button><button class="ib" id="next">›</button></div>
+      <div class="spacer"></div>
+      <button class="ib txt primary hide" id="confirmAll">일정 확정</button>
+      <button class="ib hide" id="sidetog" title="할 일 목록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M4 6h9M4 12h9M4 18h9"/><circle cx="18.5" cy="6" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/><circle cx="18.5" cy="18" r="1.3"/></svg></button>
+      <div class="seg" id="seg"><button data-v="day">일</button><button data-v="week">주</button><button data-v="month" class="on">월</button></div>
+      <button class="ib" id="more" title="보기 · 더 보기">⋯</button>
+      <div class="filter hide" id="filter"><button data-f="event"></button><button data-f="todo"></button></div>
+    </div>
+    <div class="body">
+      <div class="center">
+        <div class="view" id="v-month">
+          <div class="dow"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+          <div class="mgrid" id="mgrid"></div>
+        </div>
+        <div class="view" id="v-week">
+          <div class="tg-head" id="whead"></div><div class="allday" id="wallday"></div>
+          <div class="tg-scroll" id="wscroll"><div class="tg" id="wgrid"></div></div>
+        </div>
+        <div class="view" id="v-day">
+          <div class="tg-head" id="dhead"></div><div class="allday" id="dallday"></div>
+          <div class="tg-scroll" id="dscroll"><div class="tg" id="dgrid"></div></div>
+        </div>
+      </div>
+      <aside class="side" id="side"><div class="in" id="side-in"></div></aside>
+    </div>
+  </div>
+
+  <div class="page" id="p-set">
+    <div class="top">
+      <button class="ib" id="tog3" title="사이드바"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <div class="title">설정</div>
+    </div>
+    <div class="set-wrap"><div class="set-in">
+      <div class="set-sec"><h3>표시</h3>
+        <div class="set-row"><div class="lb">시간 표시 범위<small>시간표에 보이는 시간대</small></div>
+          <div class="hsel"><button class="hb" id="set-h0"></button><span>–</span><button class="hb" id="set-h1"></button></div></div>
+        <div class="set-row"><div class="lb">할 일 보기</div>
+          <div class="seg sm" id="set-todoview"><button data-v="list">목록</button><button data-v="board">보드</button></div></div>
+        <div class="set-row"><div class="lb">주 시작 요일</div>
+          <div class="seg sm" id="set-wstart"><button data-d="0">일요일</button><button data-d="1">월요일</button></div></div>
+        <div class="set-row"><div class="lb">월간 날짜 칸 클릭<small>빈 곳을 눌렀을 때 동작</small></div>
+          <div class="seg sm" id="set-mexp"><button data-v="0">일간 열기</button><button data-v="1">칸 펼치기</button></div></div>
+      </div>
+      <div class="set-sec"><h3>테마</h3>
+        <div class="set-row"><div class="lb">모드</div>
+          <div class="seg sm" id="modeseg"><button data-m="light">라이트</button><button data-m="dark">다크</button><button data-m="auto">시스템</button></div></div>
+        <div class="set-row wide"><div id="pal-list" class="pal-list"></div>
+          <button class="addsub" id="pnew">+ 새 테마</button></div>
+      </div>
+      <div class="set-sec"><h3>데이터</h3>
+        <div class="set-row"><div class="lb">내보내기<small>일정·할 일·테마·템플릿을 파일로 저장</small></div><button class="tb" id="set-export">내보내기</button></div>
+        <div class="set-row"><div class="lb">가져오기<small>저장해둔 파일로 되돌리기</small></div><button class="tb" id="set-import">가져오기</button><input type="file" id="set-file" accept="application/json" class="hide"></div>
+        <div class="set-row"><div class="lb">전체 초기화<small>모든 데이터를 지웁니다</small></div><button class="tb danger" id="set-reset">초기화</button></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="page" id="p-todo">
+    <div class="top">
+      <button class="ib" id="tog2" title="사이드바"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <div class="title">할 일</div>
+      <div class="spacer"></div>
+      <button class="ib" id="more2" title="보기 · 더 보기">⋯</button>
+    </div>
+    <div class="todo-wrap"><div class="todo-in" id="todo-in">
+      <div class="quick"><div class="pl"></div><input id="quick" placeholder="할 일 추가"><span class="hint">Enter</span></div>
+      <div id="todo-list"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- item modal -->
+<div class="ov" id="ov">
+  <div class="modal sheet">
+    <div class="mb">
+      <div class="seg full" id="mtype"><button data-t="event" class="on">일정</button><button data-t="todo">할 일</button></div>
+      <div class="card">
+        <div class="crow tall"><input class="big" id="f-title" placeholder="제목"></div>
+        <div class="crow tall"><textarea id="f-note" placeholder="메모"></textarea></div>
+      </div>
+      <div class="seg full hide" id="mbucket"><button data-b="soon" class="on">곧</button><button data-b="later">나중에</button><button data-b="scheduled">예정</button></div>
+
+      <div class="ch" id="f-dth">날짜 및 시간</div>
+      <div class="card" id="f-dtcard">
+        <div class="crow" id="f-alldaywrap"><span class="cl" id="f-alldaylbl">하루 종일</span><label class="tgl"><input type="checkbox" id="f-allday"><i></i></label></div>
+        <div class="crow" id="f-daterow"><span class="cl" id="f-startlbl">시작</span><div class="cv"><input type="date" id="f-date" class="nat"><input type="time" id="f-start" class="nat"></div></div>
+        <div class="crow" id="f-endwrap"><span class="cl">종료</span><div class="cv"><input type="date" id="f-dateend" class="nat"><input type="time" id="f-end" class="nat"></div></div>
+      </div>
+
+      <div class="card" id="f-repwrap">
+        <div class="crow arrow" id="f-reprow"><span class="cl">반복</span><span class="val" id="f-repval">안 함</span></div>
+        <div class="crow days-row hide" id="f-daysrow"><div class="days" id="f-days"></div></div>
+        <div class="crow hide" id="f-untilrow"><span class="cl">반복 종료</span><div class="cv"><input type="date" id="f-until" class="nat"></div></div>
+      </div>
+
+      <div class="card" id="f-alwrap">
+        <div class="alist" id="f-alerts"></div>
+        <button class="crow add" id="f-addalert"><span class="acc">알림 추가</span></button>
+        <div class="crow perm hide" id="f-perm"><span class="cl">브라우저 알림이 꺼져 있어요</span><button id="f-permbtn">허용하기</button></div>
+      </div>
+
+      <div class="card">
+        <div class="crow arrow" id="f-catrow"><span class="cl">카테고리</span><span class="val" id="f-catval"></span></div>
+        <div class="crow"><span class="cl">색상</span><div class="cpick" id="f-colors"></div></div>
+        <div class="crow arrow hide" id="f-stylewrap"><span class="cl">표시</span><span class="val" id="f-styleval">일반</span></div>
+      </div>
+
+      <div class="card hide" id="f-btwrap">
+        <div class="crow hd"><span class="cl">할 일</span><button class="lnk" id="f-btpick">기존 할 일 넣기</button></div>
+        <div class="mlist" id="f-bt"></div>
+        <div class="crow"><input id="f-btadd" class="plain" placeholder="새 할 일 입력 후 Enter"></div>
+      </div>
+
+      <div class="card hide" id="f-blockwrap"><div class="crow"><span class="cl">일정에 넣기</span><div class="cv"><input class="fld wide" id="f-block" readonly placeholder="없음"></div></div></div>
+
+      <div class="card hide" id="f-subwrap">
+        <div class="crow hd"><span class="cl">하위 항목</span></div>
+        <div class="msubs" id="f-subs"></div>
+        <button class="crow add" id="f-addsub"><span class="acc">항목 추가</span></button>
+      </div>
+    </div>
+    <div class="mf"><button class="tb danger" id="mdel">삭제</button><button class="tb hide" id="mdup">복제</button><div class="spacer"></div><button class="tb hide" id="mconfirm">확정</button><button class="tb" id="mcancel">취소</button><button class="tb primary" id="msave">저장</button></div>
+  </div>
+</div>
+
+<div class="menu" id="gmenu"></div>
+<div class="srch" id="srch"><div class="box"><input id="srch-in" placeholder="일정·할 일 검색" autocomplete="off"><div class="res" id="srch-res"></div></div></div>
+<div class="dpop" id="dpop"></div>
+<div class="lsbar hide" id="lsbar"><b>저장이 안 되고 있어요</b><span>브라우저 저장 공간이 꽉 찼거나 사생활 보호 모드일 수 있어요.</span><button id="lsexport">내보내기</button></div>
+<div class="popover" id="pop"></div>
+<div class="ov" id="tev" style="z-index:56">
+  <div class="modal" style="width:340px">
+    <div class="mb">
+      <div class="f"><input class="big" id="te-name" placeholder="테마 이름"></div>
+      <div class="f"><label>색상 8개 (클릭해서 변경)</label><div class="cpick" id="te-colors"></div></div>
+      <div class="f"><label>배경색</label><div class="bgf" id="te-bg"></div></div>
+    </div>
+    <div class="mf"><div class="spacer"></div><button class="tb" id="te-cancel">취소</button><button class="tb primary" id="te-save">저장</button></div>
+  </div>
+</div>
+<div class="ov" id="dov" style="z-index:80">
+  <div class="modal" style="width:320px">
+    <div class="mb"><div class="dlg-t" id="d-title"></div><div class="dlg-x" id="d-text"></div><div class="f hide" id="d-inwrap"><input id="d-in"></div></div>
+    <div class="mf"><div class="spacer"></div><button class="tb" id="d-cancel">취소</button><button class="tb primary" id="d-ok">확인</button></div>
+  </div>
+</div>
+<div class="ov" id="bov" style="z-index:75">
+  <div class="modal" style="width:300px">
+    <div class="mb"><div class="mh" id="b-title"></div>
+      <div class="scope"><button data-s="in" id="b-in"></button><button data-s="at" id="b-at"></button></div>
+    </div>
+    <div class="mf"><div class="spacer"></div><button class="tb" id="bcancel">취소</button></div>
+  </div>
+</div>
+<div class="ov" id="sov" style="z-index:75">
+  <div class="modal" style="width:300px">
+    <div class="mb"><div class="mh" id="s-title">반복 항목</div>
+      <div class="scope"><button data-s="one">이 날만</button><button data-s="future">이후 모두</button><button data-s="all">전체</button></div>
+    </div>
+    <div class="mf"><div class="spacer"></div><button class="tb" id="scancel">취소</button></div>
+  </div>
+</div>
+
+<div class="ov" id="cov">
+  <div class="modal" style="width:320px">
+    <div class="mb">
+      <div class="mh hide" id="c-h">대한민국 공휴일</div>
+      <div class="f" id="c-namef"><input class="big" id="c-name" placeholder="카테고리 이름"></div>
+      <div class="f"><label>색상</label><div class="cpick" id="c-colors"></div></div>
+    </div>
+    <div class="mf"><button class="tb danger" id="cdel">삭제</button><div class="spacer"></div><button class="tb" id="ccancel">취소</button><button class="tb primary" id="csave">저장</button></div>
+  </div>
+</div>
+
+<div class="ov" id="tov">
+  <div class="modal" style="width:380px">
+    <div class="mb">
+      <div class="mh">템플릿</div>
+      <div class="tsave"><input id="t-name" placeholder="이번 주 계획을 템플릿으로 저장"><button id="t-save">저장</button></div>
+      <div class="tlist" id="tlist"></div>
+    </div>
+    <div class="mf"><div class="spacer"></div><button class="tb" id="tclose">닫기</button></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
