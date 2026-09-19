@@ -32,7 +32,7 @@
       <div class="title" id="title"></div>
       <div class="nav-grp"><button class="ib" id="prev">‹</button><button class="ib today" id="today">오늘</button><button class="ib" id="next">›</button></div>
       <div class="spacer"></div>
-      <button class="ib txt primary hide" id="confirmAll">일정 확정</button>
+      <button class="ib add" id="addbtn" title="새 일정 (N)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
       <button class="ib hide" id="sidetog" title="할 일 목록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M4 6h9M4 12h9M4 18h9"/><circle cx="18.5" cy="6" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/><circle cx="18.5" cy="18" r="1.3"/></svg></button>
       <div class="seg" id="seg"><button data-v="day">일</button><button data-v="week">주</button><button data-v="month" class="on">월</button></div>
       <button class="ib" id="more" title="보기 · 더 보기">⋯</button>
@@ -40,6 +40,7 @@
     </div>
     <div class="body">
       <div class="center">
+        <button class="cfab hide" id="cbar" title="계획 확정"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
         <div class="view" id="v-month">
           <div class="dow"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
           <div class="mgrid" id="mgrid"></div>

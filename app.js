@@ -1,6 +1,6 @@
 var histReady=false;
 /* ---------- helpers ---------- */
-const SEED=[{id:'O',name:'기본',c:['#081F5C','#3B6FD1','#2F7D5B','#B9660F','#C0323B','#6B4FB8','#0E8A8A','#8A6D3B']},{id:'A',name:'클래식 네이비',c:['#1F3A93','#3A7BD5','#2E8B6E','#D48A2F','#C94F58','#7A5AC8','#2A9D9F','#8C7351']},
+const SEED=[{id:'A',name:'클래식 네이비',c:['#1F3A93','#3A7BD5','#2E8B6E','#D48A2F','#C94F58','#7A5AC8','#2A9D9F','#8C7351']},
   {id:'B',name:'애플 캘린더',c:['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#5856D6','#AF52DE']},
   {id:'C',name:'뮤트 파스텔',c:['#5B6FB5','#6FA3D8','#7DB09A','#D9A36B','#D07C82','#A08BCB','#6FB3B8','#A89076']},
   {id:'E',name:'모노 블루',c:['#0B1F5C','#2A4A9C','#4F72C2','#7D9CD8','#A9BEE6','#C0323B','#2F7D5B','#6B7280']}];
@@ -50,9 +50,15 @@ const tell=(title,text)=>dlg({title,text,alert:true});
 const askText=(title,value)=>dlg({title,input:true,value,ok:'저장'});
 
 /* ---------- prefs / theme ---------- */
-let prefs=Object.assign({theme:'auto',todoView:'list',pal:'O',def:'O',dayStart:0,dayEnd:24,wstart:0,holidays:true,terms:true,lunar:true,fold:{},tfold:{},subDel:[],mexpand:false,monthTime:true},J('planner.prefs',{}));
+let prefs=Object.assign({theme:'auto',todoView:'list',pal:'A',def:'A',dayStart:0,dayEnd:24,wstart:0,holidays:true,terms:true,lunar:true,fold:{},tfold:{},subDel:[],mexpand:false,monthTime:true},J('planner.prefs',{}));
 const savePrefs=()=>LS('planner.prefs',JSON.stringify(prefs));
-themes=J('planner.themes',[]);if(prefs.seeded!==2){SEED.forEach((t,k)=>{if(!themes.some(x=>x.id===t.id))themes.splice(k,0,{...t,c:t.c.slice()})});prefs.seeded=2;savePrefs();saveThemes()}
+themes=J('planner.themes',[]);
+if(prefs.seeded!==3){
+  themes=themes.filter(t=>t.id!=='O');
+  SEED.forEach((t,k)=>{if(!themes.some(x=>x.id===t.id))themes.splice(k,0,{...t,c:t.c.slice()})});
+  if(prefs.pal==='O'||!themes.some(t=>t.id===prefs.pal))prefs.pal='A';
+  if(prefs.def==='O'||!themes.some(t=>t.id===prefs.def))prefs.def='A';
+  prefs.seeded=3;savePrefs();saveThemes()}
 if(!themeById(prefs.def))prefs.def=themes[0].id;if(!themeById(prefs.pal))prefs.pal=prefs.def;PRESET=themeById(prefs.pal).c;
 const themeBg=()=>{const t=themeById(prefs.pal);return t&&t.bg||null};
 const lum=h=>{const[r,g,b]=hex2rgb(h);return (0.2126*r+0.7152*g+0.0722*b)/255};
@@ -94,14 +100,17 @@ $('#pnew').onclick=()=>{const t={id:uid(),name:'새 테마',c:PRESET.slice()};th
 
 /* ---------- categories / palette ---------- */
 let cats=J('planner.cats',[]);
-if(!cats.length)cats=[{id:'c1',name:'개인',color:'#081F5C',on:true},{id:'c2',name:'학교',color:'#3B6FD1',on:true},{id:'c3',name:'공부',color:'#2F7D5B',on:true}];
+if(!cats.length)cats=[{id:'c1',name:'개인',color:'#1F3A93',on:true},{id:'c2',name:'학교',color:'#3A7BD5',on:true},{id:'c3',name:'공부',color:'#2E8B6E',on:true}];
 const saveCats=()=>{if(histReady)pushHist();LS('planner.cats',JSON.stringify(cats))};
 const catOf=i=>cats.find(c=>c.id===i.cat)||cats[0];
 const colorOf=i=>i.color||catOf(i).color;
 const rgb2hsl=(r,g,b)=>{r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b);let h=0,s=0,l=(M+m)/2;if(M!==m){const d=M-m;s=l>.5?d/(2-M-m):d/(M+m);h=M===r?((g-b)/d+(g<b?6:0)):M===g?((b-r)/d+2):((r-g)/d+4);h/=6}return[h,s,l]};
-const lift=h=>{let[H,S,L]=rgb2hsl(...hex2rgb(h));if(dark){L=Math.max(L,.7);S=Math.min(Math.max(S,.45),.75)}else{if(L<=.5)return h;L=Math.min(L,.42);S=Math.max(S,.4)}return `hsl(${Math.round(H*360)} ${Math.round(S*100)}% ${Math.round(L*100)}%)`};
+const lift=h=>{let[H,S,L]=rgb2hsl(...hex2rgb(h));const gray=S<.15;
+  if(dark){L=Math.max(L,.7);if(!gray)S=Math.min(Math.max(S,.45),.75)}
+  else{if(L<=.5)return h;L=Math.min(L,gray?.5:.42);if(!gray)S=Math.max(S,.4)}
+  return `hsl(${Math.round(H*360)} ${Math.round(S*100)}% ${Math.round(L*100)}%)`};
 const paint=(el,i)=>{const c=colorOf(i);el.style.setProperty('--evc',lift(c));el.style.setProperty('--evbg',tint(c))};
-let palette=J('planner.palette',['#C0323B','#B9660F','#6B4FB8','#0E8A8A']);
+let palette=J('planner.palette',[]);
 const savePalette=()=>LS('planner.palette',JSON.stringify(palette));
 let templates=J('planner.templates',[]);
 const saveTemplates=()=>{if(histReady)pushHist();LS('planner.templates',JSON.stringify(templates))};
@@ -123,25 +132,6 @@ items.forEach((i,k)=>{if(i.type==='rem'){i.type='todo';i.bucket='scheduled'}
   if(typeof i.color!=='string')i.color=null;if(i.order==null)i.order=k;if(!Array.isArray(i.subs))i.subs=[];i.draft=!!i.draft;
   if(i.type==='event'&&!i.style)i.style='normal';if(i.type==='todo'&&i.block===undefined){i.block=null;i.blockOcc=null}
   if(!Array.isArray(i.alerts)){i.alerts=[];if(i.alert!=null){const timed=i.start&&!i.allday;i.alerts.push(timed?{m:i.alert}:{d:Math.round(i.alert/720),t:'09:00'})}delete i.alert}});
-if(!items.length){
-  const ts=todayStr;const tm=addDays(ts,2);const wk=weekDays(new Date());
-  items=[
-    {type:'event',title:'수학',date:wk[1],start:'09:00',end:'09:50',cat:'c2',rep:{freq:'weekly',days:[1,3,5],until:null}},
-    {type:'event',title:'영어',date:wk[2],start:'10:00',end:'10:50',cat:'c2',rep:{freq:'weekly',days:[2,4],until:null}},
-    {type:'event',title:'운동',date:wk[0],start:'19:00',end:'20:00',cat:'c1',rep:{freq:'daily',days:[],until:null}},
-    {type:'event',title:'기획 회의',date:ts,start:'14:00',end:'15:30',cat:'c1',note:'주간 로드맵 정리'},
-    {type:'event',title:'프로젝트 데드라인',date:ts,allday:true,cat:'c2'},
-    {type:'todo',bucket:'scheduled',title:'보고서 제출',date:ts,start:'11:00',cat:'c2'},
-    {type:'todo',bucket:'scheduled',title:'치과 예약',date:tm,start:'15:00',cat:'c1'},
-    {type:'todo',bucket:'scheduled',title:'도서 반납',date:addDays(ts,-3),start:'17:00',cat:'c1'},
-    {type:'todo',bucket:'scheduled',title:'이메일 답장',date:ts,cat:'c1',done:true},
-    {type:'todo',bucket:'soon',title:'수학 3단원',cat:'c3',subs:[{id:uid(),title:'개념 정리',done:true},{id:uid(),title:'연습문제 1~20',done:false},{id:uid(),title:'오답 노트',done:false}]},
-    {type:'todo',bucket:'later',title:'포트폴리오 정리',cat:'c1'},
-    {type:'todo',bucket:'soon',title:'발표 자료 초안',cat:'c2'},
-    {type:'todo',bucket:'later',title:'독서 - 1장',cat:'c3'},
-    {type:'event',title:'국어 복습',date:wk[3],start:'20:00',end:'21:00',cat:'c3',draft:true},
-  ].map((i,k)=>Object.assign({id:uid(),done:false,order:k,subs:[],color:null,draft:false},i));
-}
 let hist=[],redoStack=[],lastSnap=null;
 const snap=()=>JSON.stringify({items,cats,themes,templates});
 function pushHist(){const cur=snap();if(lastSnap!==null&&cur!==lastSnap){hist.push(lastSnap);if(hist.length>60)hist.shift();redoStack=[]}lastSnap=cur}
@@ -343,6 +333,13 @@ function renderTitle(){
   el.style.minWidth=(measureTitle(longest)+(pre?(pre.offsetWidth+el.querySelector('.dot').offsetWidth+12):0))+'px';
 }
 function shift(n){if(view==='month')cursor.setMonth(cursor.getMonth()+n);else if(view==='week')cursor.setDate(cursor.getDate()+7*n);else cursor.setDate(cursor.getDate()+n);render()}
+function newItem(){
+  const now=new Date();const sameP=view==='month'?ymd(cursor).slice(0,7)===todayStr.slice(0,7):ymd(cursor)===todayStr;
+  let m=sameP?Math.ceil((now.getHours()*60+now.getMinutes())/30)*30:9*60;
+  m=clamp(m,D0(),Math.max(D0(),D1()-60));
+  openModal(null,{date:ymd(cursor),start:toT(m),end:toT(Math.min(m+60,D1()-1))});
+}
+$('#addbtn').onclick=newItem;
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $('#sidetog').onclick=()=>{prefs.sideOpen=!(prefs.sideOpen!==false);savePrefs();render()};
 $('#today').onclick=()=>{cursor=new Date();cursor.setHours(0,0,0,0);render()};
@@ -357,6 +354,7 @@ document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return}
   if(page!=='cal')return;
   if(e.key==='ArrowLeft')shift(-1);if(e.key==='ArrowRight')shift(1);if(e.key==='t')$('#today').click();
+  if(e.key==='n'||e.key==='N'){e.preventDefault();newItem()}
 });
 function menuItem(label,fn,checked){const b=document.createElement('button');b.innerHTML=esc(label)+(checked?'<span class="chk">✓</span>':'');b.onclick=e=>{e.stopPropagation();closeMenus();fn()};return b}
 let menuOwner=null;
@@ -404,7 +402,7 @@ function render(){
   if(page==='set'){renderSettings();return}
   if(page==='todo'){renderTodo();return}
   renderTitle();
-  $('#confirmAll').classList.toggle('hide',!(mode==='plan'&&view!=='month'));
+  paintCBar();
   $('#seg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
   document.querySelectorAll('#filter button').forEach(b=>b.classList.toggle('on',!!filter[b.dataset.f]));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+view));
@@ -684,9 +682,20 @@ function confirmDraft(d){
   d.draft=false;delete d.link;
   if(d.type==='event')items.filter(t=>t.draft&&t.type==='todo'&&t.block===d.id).forEach(confirmDraft);
 }
-$('#confirmAll').onclick=async()=>{const w=view==='week'?weekDays(cursor):[...Array(span)].map((_,k)=>addDays(ymd(cursor),k));
-  const ds=items.filter(i=>i.draft&&w.includes(i.date));if(!ds.length){tell('확정할 계획이 없어요');return}
-  if(!await ask('일정 확정',`이 ${view==='week'?'주':'날'}의 계획 ${ds.length}개를 일정으로 확정할까요?`,'확정'))return;ds.forEach(confirmDraft);save();render()};
+function periodDays(){
+  if(view==='week')return weekDays(cursor);
+  if(view==='day')return [...Array(span)].map((_,k)=>addDays(ymd(cursor),k));
+  const f=new Date(cursor.getFullYear(),cursor.getMonth(),1),l=new Date(cursor.getFullYear(),cursor.getMonth()+1,0);
+  return [...Array(l.getDate())].map((_,k)=>addDays(ymd(f),k));
+}
+const periodName=()=>view==='week'?'이 주':view==='day'?(span>1?'이 이틀':'이 날'):'이 달';
+function periodDrafts(){const w=periodDays();return items.filter(i=>i.draft&&w.includes(i.date))}
+function paintCBar(){const n=(page==='cal'&&mode==='plan')?periodDrafts().length:0;
+  const b=$('#cbar');b.classList.toggle('hide',!n);
+  if(n)b.title=`${periodName()} 계획 ${n}개 확정`}
+$('#cbar').onclick=async()=>{const ds=periodDrafts();if(!ds.length)return;
+  if(!await ask('계획 확정',`${periodName()} 계획 ${ds.length}개를 확정하시겠습니까?`,'확정'))return;
+  ds.forEach(confirmDraft);save();render()};
 function openTemplates(){$('#tov').classList.add('on');$('#t-name').value='';paintTemplates();setTimeout(()=>$('#t-name').focus(),30)}
 function paintTemplates(){const l=$('#tlist');l.innerHTML='';$('#t-save').disabled=!snapshotWeek().length;
   if(!templates.length){l.innerHTML='<div class="empty" style="padding:8px 6px;font-size:12px;color:var(--text-3)">저장된 템플릿이 없어요</div>';return}

@@ -1,10 +1,10 @@
   :root{
-    --accent:#081F5C;--accent-2:#0C2C7E;--bg:#FFFFFF;--surface:#FFFFFF;--side:#F7F8FA;--hover:#FAFAFB;--hover-2:#EDEFF3;--sel:#E6E9EF;
+    --accent:#081F5C;--accent-2:#0C2C7E;--bg:#FFFFFF;--surface:#FFFFFF;--side:#F7F8FA;--hover:#FCFCFD;--hover-2:#EDEFF3;--sel:#E6E9EF;
     --line:#EDEFF3;--line-2:#E2E5EB;--text:#1C1C1E;--text-2:#6B7280;--text-3:#A3A9B5;--fill:#F2F3F5;--fill-2:#ECEEF2;
     --nav-h:#F4F6F9;--nav-on:#EFF1F5;--red:#E5484D;--drop:#F3F6FC;--shadow:rgba(0,0,0,.14);--hh:44px;--sbw:0px;--btn:#2B2E33;--btn-h:#3A3E45;--btn-fg:#FFFFFF;
   }
   [data-theme=dark]{
-    --accent:#A3B7E6;--accent-2:#B8C8EE;--bg:#1A1A1D;--surface:#232327;--side:#1F1F23;--hover:#212125;--hover-2:#2A2A2F;--sel:#303036;
+    --accent:#A3B7E6;--accent-2:#B8C8EE;--bg:#1A1A1D;--surface:#232327;--side:#1F1F23;--hover:#1E1E22;--hover-2:#2A2A2F;--sel:#303036;
     --line:#2A2A2F;--line-2:#38383F;--text:#ECECEE;--text-2:#9A9AA6;--text-3:#65656F;--fill:#2C2C31;--fill-2:#36363C;
     --nav-h:#242429;--nav-on:#292930;--red:#F0605F;--drop:#25293A;--shadow:rgba(0,0,0,.5);--btn:#ECECEE;--btn-h:#FFFFFF;--btn-fg:#1A1A1D;
   }
@@ -98,7 +98,7 @@
   .title .dot{font-weight:400}
   .spacer{flex:1}
   .ib{height:30px;min-width:30px;padding:0 6px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-2);font-size:15px;position:relative}
-  .ib svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+  .ib svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
   .ib:hover svg,.ib.on svg{opacity:1}
   .ib:hover,.ib.on{background:var(--fill);color:var(--text)}
   .ib.today{font-size:13px;font-weight:500;padding:0 10px}
@@ -109,12 +109,15 @@
   .seg button{height:24px;padding:0 13px;border-radius:999px;font-size:12.5px;font-weight:500;color:var(--text-2);line-height:1;display:inline-flex;align-items:center;justify-content:center}
   .seg button.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px var(--shadow)}
   .nav-grp{display:inline-flex;align-items:center;gap:2px;margin-left:-4px}
-  #sidetog{margin-left:8px;background:var(--fill);color:var(--text-3)}
+  #sidetog{margin-left:0;background:var(--fill);color:var(--text-3)}
   #sidetog:hover{background:var(--fill-2)}
   #sidetog svg{opacity:.9}
   #sidetog.on{background:var(--fill);color:var(--text)}
   #sidetog.on svg{opacity:1}
   #more,#more2{margin-left:0}
+  .ib.add{margin-left:8px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line-2);color:var(--text-2)}
+  .ib.add:hover{background:var(--surface);box-shadow:inset 0 0 0 1px var(--text-3);color:var(--text)}
+  .ib.add svg{stroke-width:2;width:17px;height:17px;opacity:.92}
   .filter{display:inline-flex;gap:2px;margin-right:2px}
   .filter .ib{color:#C5CAD3;background:none}
   .filter .ib.on{color:var(--text)}
@@ -129,7 +132,13 @@
   .view{display:none;flex:1;min-height:0;flex-direction:column}
   .view.on{display:flex}
   .body{display:flex;flex:1;min-height:0}
-  .center{flex:1;display:flex;flex-direction:column;min-width:0}
+  .center{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
+  .cfab{position:absolute;right:20px;bottom:20px;z-index:15;width:46px;height:46px;border-radius:50%;
+    background:var(--btn);color:var(--btn-fg);display:grid;place-items:center;
+    box-shadow:0 6px 20px var(--shadow);animation:cfabIn .18s ease}
+  @keyframes cfabIn{from{transform:scale(.86);opacity:0}to{transform:none;opacity:1}}
+  .cfab:hover{background:var(--btn-h)}
+  .cfab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
   /* ---------- month ---------- */
   .dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--line)}
@@ -138,8 +147,6 @@
   .mcell{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:0 6px 6px;display:flex;flex-direction:column;gap:2px;cursor:pointer;min-height:0;overflow:hidden}
   .mcell.exp{overflow:visible}
   .dhdr{display:flex;justify-content:flex-end;padding:6px 0 2px;margin:0 -6px 0;cursor:pointer;flex:none}
-  .dhdr:hover .d{background:var(--fill)}
-  .mcell.today .dhdr:hover .d{background:var(--btn)}
   .mcell:nth-child(7n){border-right:0}
   .mcell:hover{background:var(--hover)}
   .mcell.out .d{color:var(--text-3)}
@@ -159,7 +166,7 @@
   /* ---------- time grid ---------- */
   .tg-head,.allday{padding-right:var(--sbw)}
   .tg-head{display:grid;grid-template-columns:52px repeat(var(--cols,7),1fr);border-bottom:1px solid var(--line)}
-  .tg-head .cell{padding:10px 10px 8px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:baseline;gap:5px}
+  .tg-head .cell{padding:10px 10px 8px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:baseline;gap:5px;border-left:1px solid var(--line)}
   .tg-head .cell b{font-size:15px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
   .tg-head .cell.today{color:var(--accent)}
   .tg-head .cell.today b{background:var(--btn);color:var(--btn-fg);width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:13px;margin:-3px 0}
@@ -180,7 +187,8 @@
   .mcell .chip.span{margin-left:-7px;margin-right:-7px;padding-left:11px}
   .mcell .chip.span.s0{margin-left:0;padding-left:6px}
   .mcell .chip.span.e0{margin-right:0}
-  .tg-scroll{flex:1;overflow-y:scroll;min-height:0}
+  .tg-scroll{flex:1;overflow-y:scroll;min-height:0;scrollbar-width:none}
+  .tg-scroll::-webkit-scrollbar{width:0;height:0}
   .tg{display:grid;grid-template-columns:52px repeat(var(--cols,7),1fr);position:relative;height:calc(var(--dh,24) * var(--hh) + 10px)}
   .times{position:relative}
   .times div{position:absolute;right:8px;transform:translateY(-50%);font-size:10px;color:var(--text-3);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -244,8 +252,11 @@
   .cfs span:hover{background:var(--btn);color:var(--btn-fg)}
   .cfs span.del:hover{background:var(--red)}
   .blk:hover .cfs,.pin:hover .cfs,.chip:hover .cfs,.sitem:hover .cfs{display:flex}
-  .pin .cfs,.chip .cfs,.sitem .cfs{position:static;margin-left:4px;box-shadow:none;padding:0;flex:none}
-  .pin .cfs span,.chip .cfs span{width:16px;height:16px}
+  .sitem .cfs{position:static;margin-left:4px;box-shadow:none;padding:0;flex:none}
+  .pin .cfs,.chip .cfs{position:static;margin-left:auto;padding:0 0 0 5px;background:none;border-radius:0;box-shadow:none;flex:none}
+  .pin .cfs span,.chip .cfs span{width:15px;height:15px;border-radius:3px;color:var(--evc);opacity:.7;font-size:10px}
+  .pin .cfs span:hover,.chip .cfs span:hover{opacity:1;background:var(--evc);color:var(--evbg)}
+  .pin .cfs span.del:hover,.chip .cfs span.del:hover{background:var(--red);color:#fff}
 
   /* ---------- side panel ---------- */
   .side{width:0;flex:none;border-left:1px solid transparent;display:none;flex-direction:column;min-height:0;overflow:hidden;transition:width .22s ease,border-color .22s ease}
